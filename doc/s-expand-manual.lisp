@@ -48,7 +48,7 @@
                                   (if (atom arg) arg (car arg)))
                                   args)
                    result))
-         ,description
+         ,@(if (atom description) (list description) description)
          ,@(let ((details (mapcan (lambda (arg) 
                                     (when (and (listp arg)
                                                (cdr arg))
@@ -64,11 +64,48 @@
   `(article
     (title "S-EXPAND")
     (sect 1 "Introduction"
-      (para "This is just a quick hack to convert s-expressions to
+      (sect 2 "Overview"
+        (para "This is just a quick hack to convert S-Expressions to
              XML.  It came about after an attempt to write DocBook and
              great frustration over the (apparent) lack of
              TeX-comprable macros as well as XML's extreme
              verbosity."))
+      (sect 2 "Legal"
+        (para
+         "Copyright" ((trademark class copyright)) "2009 Georigia Tech
+         Research Corporation" 
+         "All rights reserved.")
+        (para
+         "Redistribution and use in source and binary forms, with or
+          without modification, are permitted provided that the
+          following conditions are met:")
+        (itemizedlist
+         (listitem (para "Redistributions of source code must retain the
+          above copyright notice, this list of conditions and the
+          following disclaimer."))
+         (listitem (para "Redistributions in binary form must reproduce the
+          above copyright notice, this list of conditions and the
+          following disclaimer in the documentation and/or other
+          materials provided with the distribution."))
+         (listitem (para "Neither the name of Google Inc. nor the names of
+          its contributors may be used to endorse or promote products
+          derived from this software without specific prior written
+          permission.")))
+
+         (para "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+          CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED
+          WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+          PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+          OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+          INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+          (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+          GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+          BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+          LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+          TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+          OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+          POSSIBILITY OF SUCH DAMAGE.")))
     (sect 1 "Usage"
       (sect 2 "Overview"
            (para "Each XML element is represented as a nested S-Expression.
@@ -110,7 +147,7 @@
            " (function "s-expand-file") ".")
         ;; now list the functions
         (itemizedlist
-         (listitem (docfun s-expand "Expands an sexpression into XML"
+         (listitem (docfun s-expand "Expands an sexpr into XML"
                            nil 
                            (stream "The stream to output XML on.  Could
                          be " (literal t) "to print to standard
@@ -124,7 +161,19 @@
                           symbols to match against the input.  The
                           cadrs of list elements are the transform
                           functions whose results get expanded into
-                          the list."))))))))
+                          the list.")))
+         (listitem (docfun s-expand-file
+                           ("Expands sexpr into an XML file given by"
+                            (varname filespec))
+                           nil
+                           (filespec "Pathname designator")
+                           (sexpr "The S-Expression to translate")
+                           "&amp;key"
+                           (xml-version "XML version number, defaults to \"1.0\"")
+                           (xml-encoding "XML encoding type, defaults to \"UTF-8\"")
+                           (doctype-string "The XML DOCTYPE")
+                           (if-exists "Passed on to " (function with-open-file))
+                           (transform-alist "Passed on to " (function s-expand)))))))))
 
 
 
