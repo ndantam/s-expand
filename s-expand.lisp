@@ -31,6 +31,12 @@
 ;; A quick hack to expand s-expressions into XML
 ;; Motivated by the inability to create macros in DocBook
 
+(defpackage :s-expand
+  (:use :cl)
+  (:export :s-expand :s-expand-file))
+
+(in-package :s-expand)
+
 (defun s-expand-1 (atom)
   (etypecase atom
     (symbol (string-downcase (symbol-name atom)))
@@ -53,27 +59,37 @@
             (format stream ">")))
       tag-name)))
 
-(defun s-expand (stream sexpr)
-  (cond 
-    ((null sexpr))
-    ((listp sexpr)
-     (let ((tag-name (s-expand-tag stream (car sexpr))))
-       (mapcan (lambda (sexpr)
-                 (s-expand stream sexpr))
-               (cdr sexpr))
-       (format stream "</~A>" tag-name)))
-    (t (write-string (s-expand-1 sexpr) stream))))
+(defun s-expand (stream sexpr &key transform-alist)
+  (labels ((helper (sexpr)
+             (cond 
+               ((null sexpr))
+               ((listp sexpr)
+                (let ((tag (car sexpr))
+                      (body (cdr sexpr)))
+                  (if (and (atom tag)
+                           (assoc tag transform-alist))
+                    (helper (apply (cadr (assoc tag transform-alist)) body))
+                    (let ((tag-name (s-expand-tag stream tag)))
+                      (terpri stream)
+                      (mapcan (lambda (x)
+                                (helper x)
+                                (terpri stream))
+                              body)
+                      (format stream "</~A>" tag-name)))))
+               (t (write-string (s-expand-1 sexpr) stream)))))
+    (helper sexpr)))
 
 
 (defun s-expand-file (filespec sexpr &key
                       (xml-version "1.0")
                       (xml-encoding "UTF-8")
                       (doctype-string "")
-                      (if-exists :error))
+                      (if-exists :error)
+                      transform-alist)
   (with-open-file (s filespec 
                      :direction :output
                      :if-exists if-exists)
     (format s "<?xml version=\"~A\" encoding=\"~A\"?>~%"
             xml-version xml-encoding)
     (format s "~A~%" doctype-string)
-    (s-expand s sexpr)))
+    (s-expand s sexpr :transform-alist transform-alist)))
