@@ -14,8 +14,8 @@
 ;;       disclaimer in the documentation and/or other materials
 ;;       provided with the distribution.
 ;;
-;;     * Neither the name of Google Inc. nor the names of its
-;;      contributors may be used to endorse or promote products
+;;     * Neither the name of the Copyright Holders nor the names of
+;;      its contributors may be used to endorse or promote products
 ;;      derived from this software without specific prior written
 ;;      permission.
 ;;
@@ -70,10 +70,16 @@
              great frustration over the (apparent) lack of
              TeX-comprable macros as well as XML's extreme
              verbosity."))
+      (sect 2 "Getting S-EXPAND"
+        (programlisting 
+         ,(concatenate 'string
+                      "git clone "
+                      "http://www.prism.gatech.edu/"
+                      "~ndantam3/git/s-expand.git")))
       (sect 2 "Legal"
         (para
          "Copyright" ((trademark class copyright)) "2009 Georigia Tech
-         Research Corporation" 
+         Research Corporation." 
          "All rights reserved.")
         (para
          "Redistribution and use in source and binary forms, with or
@@ -87,10 +93,10 @@
           above copyright notice, this list of conditions and the
           following disclaimer in the documentation and/or other
           materials provided with the distribution."))
-         (listitem (para "Neither the name of Google Inc. nor the names of
-          its contributors may be used to endorse or promote products
-          derived from this software without specific prior written
-          permission.")))
+         (listitem (para "Neither the name of the Copyright Holders
+          nor the names of their contributors may be used to endorse
+          or promote products derived from this software without
+          specific prior written permission.")))
 
          (para "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
           CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED
