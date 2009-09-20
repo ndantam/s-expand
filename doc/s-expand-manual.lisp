@@ -78,7 +78,7 @@
                       "~ndantam3/git/s-expand.git")))
       (sect 2 "Legal"
         (para
-         "Copyright" ((trademark class copyright)) "2009 Georigia Tech
+         "Copyright" ((trademark class copyright)) "2009 Georgia Tech
          Research Corporation." 
          "All rights reserved.")
         (para

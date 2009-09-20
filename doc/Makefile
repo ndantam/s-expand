@@ -7,4 +7,4 @@ s-expand-manual.xml: s-expand-manual.lisp
 	sbcl --noinform --load $< --eval "(expand)" --eval "(quit)"
 
 clean:
-	rm -f *.html *.xml *.fasl
+	rm -f *.html *.xml *.fasl s-exand
