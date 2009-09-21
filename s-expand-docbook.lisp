@@ -1,4 +1,3 @@
-;;; -*- Lisp -*-
 ;; Copyright 2009, Georgia Tech Research Corporation
 ;; All rights reserved.
 ;;
@@ -33,8 +32,42 @@
 ;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 ;; OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(asdf:defsystem s-expand
-  :description "Expands S-Expressions into XML"
-  :components ((:file "s-expand")
-               (:file "s-expand-docbook")))
-           
+;; Author: Neil T. Dantam
+
+;; S-Expand DocBook Macros
+
+
+(defpackage :s-expand-docbook
+  (:use :cl)
+  (:export :*docbook-transform-alist*))
+
+(in-package :s-expand-docbook)
+
+(defun transform-sect (level title &rest body)
+  `(,(make-symbol (format nil "sect~A" level))
+                  (title ,title)
+                  ,@body))
+
+(defun transform-docfun (name description result &rest args)
+  `(para (programlisting 
+          ,(format nil "~A ~{~A ~} =>  ~A" 
+                   name (mapcar (lambda (arg)
+                                  (if (atom arg) arg (car arg)))
+                                  args)
+                   result))
+         ,@(if (atom description) (list description) description)
+         ,@(let ((details (mapcan (lambda (arg) 
+                                    (when (and (listp arg)
+                                               (cdr arg))
+                                      `((varlistentry (term (varname ,(car arg)))
+                                                      (listitem (para
+                                                                 ,@(cdr arg)))))))
+                                  args)))
+                (when details
+                  `((variablelist ,@details))))))
+
+
+
+(defparameter *docbook-transform-alist*
+  `((:sect ,#'transform-sect)
+    (:docfun ,#'transform-docfun)))
