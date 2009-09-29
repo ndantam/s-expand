@@ -61,6 +61,14 @@
                                      (string= "&KEY"
                                               (symbol-name name)))
                                 "&amp;key")
+                               ((and (symbolp name)
+                                    (string= "&OPTIONAL"
+                                             (symbol-name name)))
+                                "&amp;optional")
+                               ((and (symbolp name)
+                                     (string= "&REST"
+                                              (symbol-name name)))
+                                "&amp;rest")
                                (t name))))
                          args)
                    result))
