@@ -85,10 +85,15 @@
             (#\> (write-string "&gt;") s)
             (otherwise (write-char c s))))))
 
-(defun transform-bsd-license (section-level title year holder)
+(defun transform-bsd-license (section-level title &rest more)
   `(:sect ,section-level ,title
-          (para
-           "Copyright" ((trademark class copyright)) ,year ,holder)
+          ,@(let ((holders))
+                 (do ((more more (cddr more)))
+                     ((null more) (nreverse holders))
+                   (push `(para
+                           "Copyright" ((trademark class copyright)) 
+                           ,(car more) ","
+                           ,(cadr more)) holders)))
           (para "All rights reserved.")
           (para
            "Redistribution and use in source and binary forms,
@@ -128,9 +133,9 @@
                  DAMAGE.")))
 
 
-
 (defparameter *docbook-transform-alist*
   `((:sect ,#'transform-sect)
     (:docfun ,#'transform-docfun)
     (:escent ,#'transform-escape-entities)
-    (:bsd-license ,#'transform-bsd-license)))
+    (:bsd-license ,#'transform-bsd-license)
+    (:cons #'cons)))
