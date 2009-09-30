@@ -57,12 +57,13 @@
                         (s-expand-1 tag)
                         (s-expand-1 (car tag)))))
       (if (atom tag)
-          (format stream "<~A>" tag-name)
+          (format stream "~&<~A>" tag-name)
           (progn 
-            (format stream "<~A" tag-name)
+            (format stream "~&<~A" tag-name)
             (print-attributes (cdr tag))
             (format stream ">")))
       tag-name)))
+
 
 (defun s-expand (stream sexpr &key transform-alist)
   (labels ((helper (sexpr)
@@ -75,13 +76,18 @@
                            (assoc tag transform-alist))
                     (helper (apply (cadr (assoc tag transform-alist)) body))
                     (let ((tag-name (s-expand-tag stream tag)))
-                      (terpri stream)
                       (mapcan (lambda (x)
                                 (helper x)
-                                (terpri stream))
+                                ;(terpri stream)
+                                )
                               body)
-                      (format stream "</~A>" tag-name)))))
-               (t (write-string (s-expand-1 sexpr) stream)))))
+                      (terpri stream)
+                      (format stream "~&</~A>" tag-name)))))
+               (t (let ((str (s-expand-1 sexpr)))
+                    (case (elt str 0)
+                      ((#\, #\. #\;))
+                      (otherwise (terpri stream)))
+                    (write-string str stream))))))
     (helper sexpr)))
 
 
