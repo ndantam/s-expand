@@ -1,4 +1,5 @@
 ;; Copyright 2009, Georgia Tech Research Corporation
+;; Copyright 2015, Rice University
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -40,52 +41,75 @@
   (:use :cl)
   (:export :s-expand :s-expand-file))
 
+
 (in-package :s-expand)
 
+(defparameter *indent* 0)
+
+(defparameter *indent-character* #\Space
+  "Character to use for indentation")
+(defparameter *indent-count* 2
+  "Number of times to repeat *indent-character* at each indent level")
+
+(defmacro with-indent (&body body)
+  `(let ((*indent* (1+ *indent*)))
+     ,@body))
+
+(defun indent (stream)
+  "Write indentation to stream."
+  (let ((string (make-string (* *indent-count*
+                                (max 0 *indent*))
+                             :initial-element *indent-character*)))
+    (write-string string stream)))
+
+
 (defun s-expand-1 (atom)
+  "Return the string expansions of an atom."
   (etypecase atom
     (symbol (string-downcase (symbol-name atom)))
     (string atom)))
 
 (defun s-expand-tag (stream tag)
+  "Expand a tag.
+
+STREAM: output stream
+TAG: An atom or cons tag"
+
   (labels ((print-attributes (list)
              (when list
                (format stream " ~A=\"~A\""
                        (s-expand-1 (car list)) (s-expand-1 (cadr list)))
                (print-attributes (cddr list)))))
-    (let ((tag-name (if (atom tag)
-                        (s-expand-1 tag)
-                        (s-expand-1 (car tag)))))
+    (let ((tag-name (s-expand-1 (if (atom tag) tag (car tag)))))
       (if (atom tag)
-          (format stream "~&<~A>" tag-name)
+          (format stream "<~A>" tag-name)
           (progn
-            (format stream "~&<~A" tag-name)
+            (format stream "<~A" tag-name)
             (print-attributes (cdr tag))
             (format stream ">")))
+      (terpri)
       tag-name)))
 
 (defun s-expand (stream sexpr &key transform-alist)
   (labels ((helper (sexpr)
-             (cond
-               ((null sexpr))
-               ((listp sexpr)
-                (let ((tag (car sexpr))
-                      (body (cdr sexpr)))
+             (etypecase sexpr
+               (null)
+               (cons
+                (destructuring-bind (tag &rest body) sexpr
                   (if (and (atom tag)
                            (assoc tag transform-alist))
                     (helper (apply (cadr (assoc tag transform-alist)) body))
-                    (let ((tag-name (s-expand-tag stream tag)))
-                      (mapcan (lambda (x)
-                                (helper x)
-                                ;(terpri stream)
-                                )
-                              body)
-                      (terpri stream)
-                      (format stream "~&</~A>" tag-name)))))
+                    (progn
+                      (indent stream)
+                      (let ((tag-name (s-expand-tag stream tag)))
+                        (with-indent (mapcan #'helper body))
+                        (terpri)
+                        (indent stream)
+                        (format stream "</~A>" tag-name))))))
                (t (let ((str (s-expand-1 sexpr)))
                     (case (elt str 0)
                       ((#\, #\. #\;))
-                      (otherwise (terpri stream)))
+                      (otherwise (indent stream)))
                     (write-string str stream))))))
     (helper sexpr)))
 
