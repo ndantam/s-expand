@@ -75,20 +75,13 @@
 STREAM: output stream
 TAG: An atom or cons tag"
 
-  (labels ((print-attributes (list)
-             (when list
-               (format stream " ~A=\"~A\""
-                       (s-expand-1 (car list)) (s-expand-1 (cadr list)))
-               (print-attributes (cddr list)))))
-    (let ((tag-name (s-expand-1 (if (atom tag) tag (car tag)))))
-      (if (atom tag)
-          (format stream "<~A>" tag-name)
-          (progn
-            (format stream "<~A" tag-name)
-            (print-attributes (cdr tag))
-            (format stream ">")))
-      (terpri)
-      tag-name)))
+  (let ((tag-name (s-expand-1 (if (atom tag) tag (car tag)))))
+    (if (atom tag)
+        (format stream "<~A>~%" tag-name)
+        (format stream "<~A~{ ~A=\"~A\"~}>~%"
+                tag-name
+                (map 'list #'s-expand-1 (cdr tag))))
+    tag-name))
 
 (defun s-expand (stream sexpr &key transform-alist)
   (labels ((helper (sexpr)
