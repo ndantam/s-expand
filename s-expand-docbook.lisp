@@ -49,14 +49,14 @@
                   ,@body))
 
 (defun transform-docfun (name description result &rest args)
-  `(para (programlisting 
-          ,(format nil "~A ~{~A ~} =>  ~A" 
-                   name (mapcar 
+  `(para (programlisting
+          ,(format nil "~A ~{~A ~} =>  ~A"
+                   name (mapcar
                          (lambda (arg)
                            (let ((name
                                   (if (atom arg)
                                       arg (car arg))))
-                             (cond 
+                             (cond
                                ((and (symbolp name)
                                      (string= "&KEY"
                                               (symbol-name name)))
@@ -73,8 +73,8 @@
                          args)
                    result))
          ,@(if (atom description) (list description) description)
-         ,@(let ((details 
-                  (mapcan (lambda (arg) 
+         ,@(let ((details
+                  (mapcan (lambda (arg)
                             (when (and (listp arg)
                                        (cdr arg))
                               `((varlistentry (term (varname ,(car arg)))
@@ -99,7 +99,7 @@
                  (do ((more more (cddr more)))
                      ((null more) (nreverse holders))
                    (push `(para
-                           "Copyright" ((trademark class copyright)) 
+                           "Copyright" ((trademark class copyright))
                            ,(car more) ","
                            ,(cadr more)) holders)))
           (para "All rights reserved.")
@@ -122,7 +122,7 @@
                        to endorse or promote products derived from
                        this software without specific prior written
                        permission.")))
-                  
+
           (para "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS
                  AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED
                  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -46,28 +46,27 @@
   (etypecase atom
     (symbol (string-downcase (symbol-name atom)))
     (string atom)))
-    
+
 (defun s-expand-tag (stream tag)
   (labels ((print-attributes (list)
              (when list
-               (format stream " ~A=\"~A\"" 
+               (format stream " ~A=\"~A\""
                        (s-expand-1 (car list)) (s-expand-1 (cadr list)))
                (print-attributes (cddr list)))))
-    (let ((tag-name (if (atom tag) 
+    (let ((tag-name (if (atom tag)
                         (s-expand-1 tag)
                         (s-expand-1 (car tag)))))
       (if (atom tag)
           (format stream "~&<~A>" tag-name)
-          (progn 
+          (progn
             (format stream "~&<~A" tag-name)
             (print-attributes (cdr tag))
             (format stream ">")))
       tag-name)))
 
-
 (defun s-expand (stream sexpr &key transform-alist)
   (labels ((helper (sexpr)
-             (cond 
+             (cond
                ((null sexpr))
                ((listp sexpr)
                 (let ((tag (car sexpr))
@@ -90,14 +89,13 @@
                     (write-string str stream))))))
     (helper sexpr)))
 
-
 (defun s-expand-file (filespec sexpr &key
                       (xml-version "1.0")
                       (xml-encoding "UTF-8")
                       (doctype-string "")
                       (if-exists :error)
                       transform-alist)
-  (with-open-file (s filespec 
+  (with-open-file (s filespec
                      :direction :output
                      :if-exists if-exists)
     (format s "<?xml version=\"~A\" encoding=\"~A\"?>~%"

@@ -48,7 +48,7 @@
              TeX-comprable macros as well as XML's extreme
              verbosity."))
       (:sect 2 "Getting S-EXPAND"
-        (programlisting 
+        (programlisting
          ,(concatenate 'string
                       "git clone "
                       "http://www.prism.gatech.edu/"
@@ -56,7 +56,7 @@
       (:sect 2 "Legal"
         (para
          "Copyright" ((trademark class copyright)) "2009 Georgia Tech
-         Research Corporation." 
+         Research Corporation."
          "All rights reserved.")
         (para
          "Redistribution and use in source and binary forms, with or
@@ -98,19 +98,19 @@
              the CDR being a property list of attribte-names and
              attribute-values."))
       (:sect 2 "Representation Example"
-        (example 
+        (example
          (title "Representation")
-         (programlisting 
+         (programlisting
           ,(concatenate 'string
                         "(strong \"Text\")"
                         "  =>  "
                         "&lt;strong&gt;Text&lt;/strong&gt;"))
-       (programlisting 
+       (programlisting
         ,(concatenate 'string
                       "((a href \"foo.txt\") Link)"
                       "  =>  "
                       "&lt;a href=\"foo.txt\"&gt;Link&lt;/a&gt;"))
-       (programlisting 
+       (programlisting
         ,(concatenate 'string
                       "(p symbol \"text\" (strong words))"
                       "  =>  "
@@ -131,13 +131,13 @@
         ;; now list the functions
         (itemizedlist
          (listitem (:docfun s-expand "Expands an sexpr into XML"
-                            nil 
+                            nil
                             (stream "The stream to output XML on.
                              Could be " (literal t) "to print to
                              standard output.")
                             (sexpr "The sexpression that's being translated")
                             "&amp;key"
-                            (transform-alist 
+                            (transform-alist
                              "An association list of elements whose
                               cadr is a transform function (described
                               above).  The keys in the assoc list are

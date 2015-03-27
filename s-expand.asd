@@ -37,4 +37,3 @@
   :description "Expands S-Expressions into XML"
   :components ((:file "s-expand")
                (:file "s-expand-docbook")))
-           
