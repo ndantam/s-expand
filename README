@@ -1,0 +1,28 @@
+OVERVIEW
+========
+
+S-EXPAND converts s-expressions to XML.
+
+
+EXAMPLES
+========
+
+The CAR of the list becomes the XML tag, and CDR becomes the XML
+body.
+
+    (s-expand '(strong "Text"))
+
+=>  <strong>Text</strong>
+
+Multiple elements in the CDR are concatenated.
+
+    (s-expand '(p symbol "text" (strong words))
+
+=>  <p>symbol text <strong>words</strong><p>
+
+If the CAR is a list, then the CAAR becomes the XML tag, and the CDAR
+becomes the XML attributes.
+
+    (s-expand '((a href "http://www.neil.dantam.name") My Homepage)
+
+=>  <a href="http://www.neil.dantam.name">My Homepage</a>
